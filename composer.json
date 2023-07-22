@@ -1,0 +1,19 @@
+{
+    "name": "devinson/architect",
+    "description": "A simple library for common data structures management.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Devinson\\Architect\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Devinson Alvarez",
+            "email": "dalvarez@sistemasmitdev.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
