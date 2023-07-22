@@ -1,19 +1,32 @@
 {
-    "name": "devinson/architect",
-    "description": "A simple library for common data structures management.",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Devinson\\Architect\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Devinson Alvarez",
-            "email": "dalvarez@sistemasmitdev.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {}
+  "name": "devinson/architect",
+  "description": "A simple library for common data structures management.",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Devinson\\Architect\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Devinson\\Architect\\Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Devinson Alvarez",
+      "email": "devinson.20jemaine@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require-dev": {
+    "phpstan/phpstan": "1.10.26",
+    "friendsofphp/php-cs-fixer": "3.22.0",
+    "phpunit/phpunit": "10.2.6"
+  },
+  "scripts": {
+    "analyse": "vendor/bin/phpstan analyse",
+    "fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php"
+  }
 }
