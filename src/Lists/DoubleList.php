@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Devinson\Architect\Lists;
 
-class Double
+class DoubleList
 {
 }
