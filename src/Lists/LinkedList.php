@@ -10,9 +10,18 @@ class LinkedList
 {
     private null|LinkedNode $head;
 
-    public function __construct()
+    /**
+     * @param array<mixed, mixed> $data
+     */
+    public function __construct($data = null)
     {
         $this->head = null;
+
+        if ($data) {
+            foreach ($data as $item) {
+                $this->push($item);
+            }
+        }
     }
 
     /**
@@ -148,6 +157,9 @@ class LinkedList
         return null;
     }
 
+    /**
+     * Find an elemento into the list
+     */
     public function find(mixed $target): ?Node
     {
         if ($this->isNotEmpty()) {
@@ -169,6 +181,9 @@ class LinkedList
         return null;
     }
 
+    /**
+     * Remove a specific element into the list
+     */
     public function remove(mixed $target): bool
     {
         if ($this->isNotEmpty()) {
@@ -219,6 +234,9 @@ class LinkedList
         return null;
     }
 
+    /**
+     * Return the last element in the list
+     */
     public function getLastNode(): ?Node
     {
         if ($this->isNotEmpty()) {
@@ -234,16 +252,25 @@ class LinkedList
         return null;
     }
 
+    /**
+     * Return the first element in the list
+     */
     public function getFirstNode(): ?Node
     {
         return $this->head;
     }
 
+    /**
+     * Check if the list is empty
+     */
     public function isEmpty(): bool
     {
         return $this->head == null;
     }
 
+    /**
+     * Check if the list is not empty
+     */
     public function isNotEmpty(): bool
     {
         return $this->head != null;

@@ -19,7 +19,9 @@
       "email": "devinson.20jemaine@gmail.com"
     }
   ],
-  "minimum-stability": "dev",
+  "require": {
+    "php": "^8.1"
+  },
   "require-dev": {
     "phpstan/phpstan": "1.10.26",
     "friendsofphp/php-cs-fixer": "3.22.0",
@@ -29,5 +31,6 @@
     "analyse": "vendor/bin/phpstan analyse",
     "fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php",
     "test": "vendor/bin/phpunit"
-  }
+  },
+  "minimum-stability": "dev"
 }

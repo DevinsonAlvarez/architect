@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Devinson\Architect\Tests;
 
 use Devinson\Architect\Lists\LinkedList;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class LinkedListTest extends TestCase
 {
-    public function test_push_element_in_empty_list(): void
+    final public function test_push_element_in_empty_list(): void
     {
         $list = new LinkedList();
 
@@ -17,25 +18,17 @@ final class LinkedListTest extends TestCase
         $this->assertSame('node', $list->getLastNode()->getData());
     }
 
-    public function test_push_element_in_not_empty_list(): void
+    #[DataProvider('shortList')]
+    final public function test_push_element_in_not_empty_list(LinkedList $list): void
     {
-        $list = new LinkedList();
-        $list->push('node1');
-        $list->push('node2');
-        $list->push('node3');
-
         $list->push('new node');
 
         $this->assertSame('new node', $list->getLastNode()->getData());
     }
 
-    public function test_pop_element(): void
+    #[DataProvider('shortList')]
+    final public function test_pop_element(LinkedList $list): void
     {
-        $list = new LinkedList();
-        $list->push('node1');
-        $list->push('node2');
-        $list->push('node3');
-
         $this->assertSame('node3', $list->getLastNode()->getData());
 
         $list->pop();
@@ -44,19 +37,14 @@ final class LinkedListTest extends TestCase
         $this->assertSame(null, $list->getLastNode()->getNext());
     }
 
-    public function test_list_to_array(): void
+    #[DataProvider('mediumList')]
+    final public function test_list_to_array(LinkedList $list): void
     {
-        $list = new LinkedList();
-
-        for ($i = 0; $i < 10; $i++) {
-            $list->push('node' . ($i + 1));
-        }
-
         // print_r($list->toArray());
         $this->assertIsArray($list->toArray());
     }
 
-    public function test_shift_element_in_empty_list(): void
+    final public function test_shift_element_in_empty_list(): void
     {
         $list = new LinkedList();
 
@@ -64,7 +52,8 @@ final class LinkedListTest extends TestCase
         $this->assertSame('node', $list->getFirstNode()->getData());
     }
 
-    public function test_shift_element_in_not_empty_list(): void
+    #[DataProvider('mediumList')]
+    final public function test_shift_element_in_not_empty_list(LinkedList $list): void
     {
         $list = new LinkedList();
 
@@ -77,52 +66,71 @@ final class LinkedListTest extends TestCase
         $this->assertSame($listHead, $newNode);
     }
 
-    public function test_unshift_element_in_empty_list(): void
+    final public function test_unshift_element_in_empty_list(): void
     {
         $list = new LinkedList();
 
         $this->assertSame(false, $list->unshift());
     }
 
-    public function test_unshift_element_in_not_empty_list(): void
+    #[DataProvider('mediumList')]
+    final public function test_unshift_element_in_not_empty_list(LinkedList $list): void
     {
-        $list = new LinkedList();
-
-        for ($i = 0; $i < 10; $i++) {
-            $list->push('node' . ($i + 1));
-        }
-
         $list->unshift();
 
         $this->assertSame('node2', $list->getFirstNode()->getData());
     }
 
-    public function test_add_before(): void
+    #[DataProvider('mediumList')]
+    final public function test_add_before(LinkedList $list): void
     {
-        $list = new LinkedList();
-
-        for ($i = 0; $i < 10; $i++) {
-            $list->push('node' . ($i + 1));
-        }
-
         $addedNode = $list->addBefore('new node', 'node5');
 
         $this->assertSame($addedNode, $list->find('new node'));
     }
 
-    public function test_find_an_element(): void
+    #[DataProvider('longList')]
+    final public function test_find_an_element(LinkedList $list): void
     {
-        $list = new LinkedList();
-
-        for ($i = 0; $i < 10; $i++) {
-            $list->push('node' . ($i + 1));
-        }
-
         $this->assertSame('node3', $list->find('node3')->getData());
         $this->assertNotSame('node3', $list->find('node5')->getData());
     }
 
-    public function test_remove_method(): void
+    #[DataProvider('mediumList')]
+    final public function test_remove_method(LinkedList $list): void
+    {
+        $this->assertSame(true, $list->remove('node5'));
+    }
+
+    final public function test_construct(): void
+    {
+        $data = ['node1', 'node2', 'node3'];
+
+        $list = new LinkedList($data);
+
+        $this->assertSame($data, $list->toArray());
+    }
+
+    /**
+     * @return array<int, array<int, LinkedList>>
+     */
+    public static function shortList()
+    {
+        $list = new LinkedList();
+
+        for ($i = 0; $i < 3; $i++) {
+            $list->push('node' . ($i + 1));
+        }
+
+        return [
+            [$list]
+        ];
+    }
+
+    /**
+     * @return array<int, array<int, LinkedList>>
+     */
+    public  static function mediumList()
     {
         $list = new LinkedList();
 
@@ -130,6 +138,24 @@ final class LinkedListTest extends TestCase
             $list->push('node' . ($i + 1));
         }
 
-        $this->assertSame(true, $list->remove('node5'));
+        return [
+            [$list]
+        ];
+    }
+
+    /**
+     * @return array<int, array<int, LinkedList>>
+     */
+    public  static function longList()
+    {
+        $list = new LinkedList();
+
+        for ($i = 0; $i < 50; $i++) {
+            $list->push('node' . ($i + 1));
+        }
+
+        return [
+            [$list]
+        ];
     }
 }
