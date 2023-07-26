@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Devinson\Architect\Lists;
 
-class LinkedNode
+class DoubleNode
 {
     /**
      * Value stored in the node
@@ -14,12 +14,18 @@ class LinkedNode
     /**
      * Next node pointed to
      */
-    protected ?LinkedNode $next;
+    protected ?DoubleNode $next;
+
+    /**
+     * Previous node pointed to
+     */
+    protected ?DoubleNode $prev;
 
     public function __construct(mixed $data)
     {
         $this->data = $data;
         $this->next = null;
+        $this->prev = null;
     }
 
     /**
@@ -49,8 +55,24 @@ class LinkedNode
     /**
      * Return the next node pointed to
      */
-    public function getNext(): ?LinkedNode
+    public function getNext(): ?DoubleNode
     {
         return $this->next;
+    }
+
+    /**
+     * Sets the previous node to point to
+     */
+    public function setPrev(mixed $prev): void
+    {
+        $this->prev = $prev;
+    }
+
+    /**
+     * Return the previous node pointed to
+     */
+    public function getPrev(): ?DoubleNode
+    {
+        return $this->prev;
     }
 }

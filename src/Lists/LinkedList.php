@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Devinson\Architect\Lists;
 
 use Devinson\Architect\Lists\LinkedNode as Node;
+use PhpParser\Node\Stmt\Nop;
 
 class LinkedList
 {
-    private null|LinkedNode $head;
+    /**
+     * First node in the list
+     */
+    protected ?Node $head;
 
     /**
      * @param array<mixed, mixed> $data
@@ -104,15 +108,10 @@ class LinkedList
     public function addBefore(mixed $data, mixed $target): ?Node
     {
         if ($this->isNotEmpty()) {
-            $currentNode = $this->head;
-            $prevNode = null;
+            $currentNode = $this->find($target);
+            $prevNode = $this->findBefore($currentNode);
 
-            while ($currentNode->getData() != $target && $currentNode->getNext()) {
-                $prevNode = $currentNode;
-                $currentNode = $currentNode->getNext();
-            }
-
-            if ($currentNode->getData() == $target) {
+            if ($currentNode) {
                 $newNode = new Node($data);
 
                 if ($prevNode) {
@@ -139,18 +138,15 @@ class LinkedList
     public function addAfter(mixed $data, mixed $target): ?Node
     {
         if ($this->isNotEmpty()) {
-            $currentNode = $this->head;
+            $currentNode = $this->find($target);
 
-            while ($currentNode->getData() != $target && $currentNode->getNext()) {
-                $currentNode = $currentNode->getNext();
-            }
-
-            if ($currentNode->getData() == $target) {
+            if ($currentNode) {
                 $newNode = new Node($data);
 
-                $currentNode = $currentNode->getNext();
+                $newNode->setNext($currentNode->getNext());
                 $currentNode->setNext($newNode);
-                $newNode->setNext($currentNode);
+
+                return $newNode;
             }
         }
 
@@ -158,7 +154,7 @@ class LinkedList
     }
 
     /**
-     * Find an elemento into the list
+     * Find an element into the list
      */
     public function find(mixed $target): ?Node
     {
@@ -166,19 +162,52 @@ class LinkedList
             $currentNode = $this->head;
 
             if ($target instanceof Node) {
-                while ($currentNode->getData() != $target->getData() && $currentNode->getNext()) {
-                    $currentNode = $currentNode->getNext();
-                }
-            } else {
-                while ($currentNode->getData() != $target && $currentNode->getNext()) {
-                    $currentNode = $currentNode->getNext();
-                }
+                $target = $target->getData();
+            }
+
+            while ($currentNode->getData() != $target && $currentNode->getNext()) {
+                $currentNode = $currentNode->getNext();
             }
 
             return $currentNode;
         }
 
         return null;
+    }
+
+    /**
+     * Find the element before the target
+     */
+    public function findBefore(mixed $target): ?Node
+    {
+        if ($this->isNotEmpty()) {
+            $currentNode = $this->head;
+
+            if ($target instanceof Node) {
+                $target = $target->getData();
+            }
+
+            if ($this->head->getData() == $target) {
+                return null;
+            }
+
+            while ($currentNode->getData() != $target && $currentNode->getNext()) {
+                $prevNode = $currentNode;
+                $currentNode = $currentNode->getNext();
+            }
+
+            return $prevNode;
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the element after the target
+     */
+    public function findAfter(mixed $target): ?Node
+    {
+        return $this->find($target)->getNext();
     }
 
     /**
