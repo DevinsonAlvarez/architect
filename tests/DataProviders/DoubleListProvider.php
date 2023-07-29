@@ -27,7 +27,7 @@ final class DoubleListProvider
     /**
      * @return array<int, array<int, DoubleList>>
      */
-    public  static function mediumList()
+    public static function mediumList()
     {
         $list = new DoubleList();
 
@@ -43,7 +43,7 @@ final class DoubleListProvider
     /**
      * @return array<int, array<int, DoubleList>>
      */
-    public  static function longList()
+    public static function longList()
     {
         $list = new DoubleList();
 

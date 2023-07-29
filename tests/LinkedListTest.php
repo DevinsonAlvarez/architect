@@ -6,7 +6,6 @@ namespace Devinson\Architect\Tests;
 
 use Devinson\Architect\Lists\LinkedList;
 use Devinson\Architect\Tests\DataProviders\LinkedListProvider;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\TestCase;
 
