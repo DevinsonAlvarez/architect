@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Devinson\Architect\Lists;
 
 use Devinson\Architect\Lists\LinkedNode as Node;
-use PhpParser\Node\Stmt\Nop;
 
 class LinkedList
 {
@@ -260,7 +259,7 @@ class LinkedList
             return $array;
         }
 
-        return null;
+        return;
     }
 
     /**

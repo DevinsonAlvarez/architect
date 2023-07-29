@@ -27,7 +27,7 @@ final class LinkedListProvider
     /**
      * @return array<int, array<int, LinkedList>>
      */
-    public  static function mediumList()
+    public static function mediumList()
     {
         $list = new LinkedList();
 
@@ -43,7 +43,7 @@ final class LinkedListProvider
     /**
      * @return array<int, array<int, LinkedList>>
      */
-    public  static function longList()
+    public static function longList()
     {
         $list = new LinkedList();
 

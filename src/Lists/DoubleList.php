@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Devinson\Architect\Lists;
 
 use Devinson\Architect\Lists\DoubleNode as Node;
-use PhpParser\Node\Stmt\Nop;
 
 class DoubleList
 {
@@ -229,7 +228,7 @@ class DoubleList
             return $array;
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -271,6 +270,6 @@ class DoubleList
      */
     public function isNotEmpty(): bool
     {
-        return $this->head != null;
+        return !$this->isEmpty();
     }
 }
