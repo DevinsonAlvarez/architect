@@ -66,7 +66,7 @@ final class DoubleListTest extends TestCase
     #[DataProviderExternal(DoubleListProvider::class, 'shortList')]
     final public function test_unshift_element(DoubleList $list): void
     {
-        $list->unshift('node1');
+        $list->unshift();
 
         $this->assertSame('node2', $list->getFirstNode()->getData());
     }

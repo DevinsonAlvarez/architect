@@ -10,7 +10,6 @@ return $config->setRules([
     'array_syntax' => ['syntax' => 'short'],
     'declare_strict_types' => true,
     'void_return' => true,
-    'simplified_null_return' => true,
     'no_unused_imports' => true,
 ])
     ->setFinder($finder)

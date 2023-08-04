@@ -14,7 +14,7 @@ class DoubleList
     protected ?Node $head;
 
     /**
-     * @param array<mixed, mixed> $data
+     * @param array<mixed> $data
      */
     public function __construct(array $data = [])
     {
@@ -228,7 +228,7 @@ class DoubleList
             return $array;
         }
 
-        return;
+        return null;
     }
 
     /**

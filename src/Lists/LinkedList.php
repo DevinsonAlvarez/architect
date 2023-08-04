@@ -14,7 +14,7 @@ class LinkedList
     protected ?Node $head;
 
     /**
-     * @param array<mixed, mixed> $data
+     * @param array<mixed,mixed> $data
      */
     public function __construct($data = null)
     {
@@ -190,6 +190,8 @@ class LinkedList
                 return null;
             }
 
+            $prevNode = null;
+
             while ($currentNode->getData() != $target && $currentNode->getNext()) {
                 $prevNode = $currentNode;
                 $currentNode = $currentNode->getNext();
@@ -242,7 +244,7 @@ class LinkedList
     }
 
     /**
-     * @return null|array<int, mixed>
+     * @return null|array<int,mixed>
      */
     public function toArray()
     {
@@ -259,7 +261,7 @@ class LinkedList
             return $array;
         }
 
-        return;
+        return null;
     }
 
     /**

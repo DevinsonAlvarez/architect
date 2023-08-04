@@ -14,13 +14,22 @@ Go inside your composer proyect and open your `composer.json` file, here you mus
 
 ```json
 {
+  "require": {
+    "devinson/architect": "dev-main"
+  },
   "repositories": [
     {
-      "type": "composer",
+      "type": "vcs",
       "url": "https://github.com/DevinsonAlvarez/architect.git"
     }
   ]
 }
+```
+
+And then install the package.
+
+```sh
+composer install
 ```
 
 ## Usage

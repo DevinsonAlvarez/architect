@@ -9,7 +9,7 @@ use Devinson\Architect\Lists\LinkedList;
 final class LinkedListProvider
 {
     /**
-     * @return array<int, array<int, LinkedList>>
+     * @return array<int,array<int,LinkedList>>
      */
     public static function shortList()
     {
@@ -25,7 +25,7 @@ final class LinkedListProvider
     }
 
     /**
-     * @return array<int, array<int, LinkedList>>
+     * @return array<int,array<int,LinkedList>>
      */
     public static function mediumList()
     {
@@ -41,7 +41,7 @@ final class LinkedListProvider
     }
 
     /**
-     * @return array<int, array<int, LinkedList>>
+     * @return array<int,array<int,LinkedList>>
      */
     public static function longList()
     {
