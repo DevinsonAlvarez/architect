@@ -16,7 +16,7 @@ class Stack
     /**
      * @param array<mixed> $data
      */
-    public function __construct(array $data = [], private ?int $capacity = null)
+    public function __construct(array $data = [])
     {
         if (count($data) != 0) {
             foreach ($data as $item) {
@@ -28,15 +28,11 @@ class Stack
     /**
      * Insert an element at the top of the stack
      */
-    public function push(mixed $data): ?int
+    public function push(mixed $data): int
     {
-        if (!$this->isFull()) {
-            $this->stack[++$this->top] = $data;
+        $this->stack[++$this->top] = $data;
 
-            return $this->top;
-        }
-
-        return null;
+        return $this->top;
     }
 
     /**
@@ -103,25 +99,9 @@ class Stack
     }
 
     /**
-     * Check if the stack is full
-     */
-    public function isFull(): bool
-    {
-        if ($this->capacity == null) {
-            return false;
-        }
-
-        if ($this->top == $this->capacity - 1) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * @return null|array<int,mixed>
      */
-    public function toArray(): array
+    public function toArray()
     {
         if ($this->isNotEmpty()) {
             return $this->stack;
