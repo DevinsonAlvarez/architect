@@ -1,6 +1,6 @@
-# A simple way to use _**Data Structures**_ - <u>Work in Progress</u>
+# A simple way to use _**Data Structures**_ - Work in Progress
 
-### This is a simple package for handling the most common data structures.
+This is a simple package for handling the most common data structures
 
 ## Installation
 

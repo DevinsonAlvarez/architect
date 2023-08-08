@@ -32,7 +32,7 @@ final class LinkedListTest extends TestCase
     {
         $this->assertSame('node3', $list->getLastNode()->getData());
 
-        $list->pop();
+        $this->assertSame(true, $list->pop());
 
         $this->assertSame('node2', $list->getLastNode()->getData());
         $this->assertSame(null, $list->getLastNode()->getNext());
@@ -41,8 +41,17 @@ final class LinkedListTest extends TestCase
     #[DataProviderExternal(LinkedListProvider::class, 'mediumList')]
     final public function test_list_to_array(LinkedList $list): void
     {
-        // print_r($list->toArray());
-        $this->assertIsArray($list->toArray());
+        $arrayList = $list->toArray();
+
+        $this->assertIsArray($arrayList);
+
+        $i = 0;
+
+        foreach ($arrayList as $key => $value) {
+            $this->assertSame($i, $key);
+            $this->assertSame($list->find($value)->getData(), $value);
+            $i++;
+        }
     }
 
     final public function test_shift_element_in_empty_list(): void

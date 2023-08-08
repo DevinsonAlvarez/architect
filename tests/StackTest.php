@@ -28,15 +28,15 @@ final class StackTest extends TestCase
     {
         $stack->push('new element');
 
-        $this->assertSame('new element', $stack->topElement());
+        $this->assertSame('new element', $stack->getTop());
     }
 
     #[DataProviderExternal(StackProvider::class, 'shortStack')]
     final public function test_pop_element_in_not_empty_stack(Stack $stack): void
     {
-        $popedElement = $stack->pop();
+        $poppedElement = $stack->pop();
 
-        $this->assertSame('element5', $popedElement);
-        $this->assertSame(4, $stack->size());
+        $this->assertSame('element5', $poppedElement);
+        $this->assertSame(4, $stack->getSize());
     }
 }

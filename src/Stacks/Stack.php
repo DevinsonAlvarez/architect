@@ -14,7 +14,7 @@ class Stack
     private $stack = [];
 
     /**
-     * @param array<mixed> $data
+     * @param mixed[] $data
      */
     public function __construct(array $data = [])
     {
@@ -65,7 +65,7 @@ class Stack
     /**
      * Return the size of the stack
      */
-    public function size(): int
+    public function getSize(): int
     {
         return $this->top + 1;
     }
@@ -73,7 +73,7 @@ class Stack
     /**
      * Return the top element in the list
      */
-    public function topElement(): mixed
+    public function getTop(): mixed
     {
         if ($this->isNotEmpty()) {
             return $this->stack[$this->top];
