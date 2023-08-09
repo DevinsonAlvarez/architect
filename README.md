@@ -10,7 +10,7 @@ First we need to create a composer project.
 composer create-project my_project
 ```
 
-Go inside your composer proyect and open your `composer.json` file, here you must add the follow lines.
+Go inside your composer project and open your `composer.json` file, here you must add the follow lines.
 
 ```json
 {
@@ -35,3 +35,16 @@ composer install
 ## Usage
 
 coming soon...
+
+### TODO
+
+1. Add generic types and types hint to:
+
+   - List
+   - Linked List
+   - Linked Node
+   - Double Linked Node
+   - Stack
+   - Queue
+
+2. Create Non-Linear data structures (Binary Trees, Heap, Graphs, etc...).
