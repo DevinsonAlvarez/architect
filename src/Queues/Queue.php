@@ -74,7 +74,7 @@ class Queue
 
     /**
      * Returns the queue as an array
-     * 
+     *
      * @return null|array<int,mixed>
      */
     public function toArray(): ?array

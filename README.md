@@ -38,7 +38,7 @@ coming soon...
 
 ### TODO
 
-1. Add generic types and types hint to:
+1. Add generic types and types hinting to:
 
    - List
    - Linked List

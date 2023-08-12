@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Devinson\Architect\Lists;
 
+/**
+ * @template TValue
+ */
 class LinkedNode
 {
     /**
-     * Value stored in the node
+     * Next node pointed to
+     *
+     * @var null|LinkedNode<mixed>
      */
-    protected mixed $data;
+    protected ?self $next = null;
 
     /**
-     * Next node pointed to
+     * @param TValue $data
      */
-    protected ?LinkedNode $next;
-
-    public function __construct(mixed $data)
+    public function __construct(protected $data)
     {
-        $this->data = $data;
-        $this->next = null;
     }
 
     /**
@@ -32,24 +33,31 @@ class LinkedNode
 
     /**
      * Returns the values stored in the node
+     *
+     * @return TValue
      */
-    public function getData(): mixed
+    public function getData()
     {
         return $this->data;
     }
 
     /**
      * Sets the next node to point to
+     *
+     * @template TNext
+     * @param TNext $next
      */
-    public function setNext(mixed $next): void
+    public function setNext($next): void
     {
-        $this->next = $next;
+        $this->next = new self($next);
     }
 
     /**
      * Return the next node pointed to
+     *
+     * @return null|LinkedNode<mixed>
      */
-    public function getNext(): ?LinkedNode
+    public function getNext(): ?self
     {
         return $this->next;
     }
