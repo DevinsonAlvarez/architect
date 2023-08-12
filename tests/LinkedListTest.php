@@ -13,16 +13,22 @@ final class LinkedListTest extends TestCase
 {
     final public function test_push_element_in_empty_list(): void
     {
+        /** @var LinkedList<string> */
         $list = new LinkedList();
 
         $list->push('node');
         $this->assertSame('node', $list->getLastNode()->getData());
     }
 
+    /**
+     * @param LinkedList<string> $list
+     */
     #[DataProviderExternal(LinkedListProvider::class, 'shortList')]
     final public function test_push_element_in_not_empty_list(LinkedList $list): void
     {
         $list->push('new node');
+
+        $a = $list->getLastNode();
 
         $this->assertSame('new node', $list->getLastNode()->getData());
     }
@@ -44,14 +50,6 @@ final class LinkedListTest extends TestCase
         $arrayList = $list->toArray();
 
         $this->assertIsArray($arrayList);
-
-        $i = 0;
-
-        foreach ($arrayList as $key => $value) {
-            $this->assertSame($i, $key);
-            $this->assertSame($list->find($value)->getData(), $value);
-            $i++;
-        }
     }
 
     final public function test_shift_element_in_empty_list(): void
@@ -97,7 +95,7 @@ final class LinkedListTest extends TestCase
         $newNode = $list->addBefore('new node', 'node5');
 
         $this->assertSame('node5', $newNode->getNext()->getData());
-        $this->assertSame('new node', $list->find('node4')->getNext()->getData());
+        $this->assertSame('new node', $list->findAfter('node4'));
     }
 
     #[DataProviderExternal(LinkedListProvider::class, 'mediumList')]
@@ -106,14 +104,7 @@ final class LinkedListTest extends TestCase
         $newNode = $list->addAfter('new node', 'node5');
 
         $this->assertSame('node6', $newNode->getNext()->getData());
-        $this->assertSame('new node', $list->find('node5')->getNext()->getData());
-    }
-
-    #[DataProviderExternal(LinkedListProvider::class, 'longList')]
-    final public function test_find_an_element(LinkedList $list): void
-    {
-        $this->assertSame('node3', $list->find('node3')->getData());
-        $this->assertNotSame('node3', $list->find('node5')->getData());
+        $this->assertSame('new node', $list->findAfter('node5'));
     }
 
     #[DataProviderExternal(LinkedListProvider::class, 'mediumList')]

@@ -13,7 +13,7 @@ class LinkedList
 {
     /**
      * First node in the list
-     * 
+     *
      * @var null|Node<TNode> $head
      */
     protected ?Node $head = null;
@@ -32,9 +32,9 @@ class LinkedList
 
     /**
      * Insert an element at the end of the list
-     * 
+     *
      * @param TNode $data
-     * 
+     *
      * @return Node<TNode>
      */
     public function push($data): Node
@@ -61,14 +61,18 @@ class LinkedList
             $lastNode = $this->getLastNode();
             $currentNode = $this->head;
 
-            while ($currentNode->getNext() != $lastNode) {
-                $currentNode = $currentNode->getNext();
+            if ($lastNode) {
+                while ($currentNode->getNext() !== $lastNode) {
+                    if ($nextNode = $currentNode->getNext()) {
+                        $currentNode = $nextNode;
+                    }
+                }
+
+                $currentNode->setNext(null);
+                unset($lastNode);
+
+                return true;
             }
-
-            $currentNode->setNext(null);
-            unset($lastNode);
-
-            return true;
         }
 
         return false;
@@ -76,7 +80,7 @@ class LinkedList
 
     /**
      * Insert an element at the top of the list
-     * 
+     *
      * @param TNode $data
      * @return Node<TNode>
      */
@@ -101,31 +105,30 @@ class LinkedList
      */
     public function unshift(): bool
     {
-        if ($this->isNotEmpty()) {
-            $newHead = $this->head->getNext();
-            $this->head = $newHead;
+        if ($this->head) {
+            if ($newHead = $this->head->getNext()) {
+                $this->head = $newHead;
 
-            return true;
+                return true;
+            }
         }
-
         return false;
     }
 
     /**
      * Insert an element before the specific node
-     * 
+     *
      * @param TNode $data
      * @param TNode|Node<TNode> $target
-     * 
+     *
      * @return null|Node<TNode>
      */
     public function addBefore($data, $target): ?Node
     {
         if ($this->isNotEmpty()) {
-            $currentNode = $this->find($target);
-            $prevNode = $this->findBefore($currentNode);
+            if ($currentNode = $this->getNode($target)) {
+                $prevNode = $this->getNodeBefore($currentNode);
 
-            if ($currentNode) {
                 $newNode = new Node($data);
 
                 if ($prevNode) {
@@ -148,16 +151,16 @@ class LinkedList
 
     /**
      * Insert an element after the specific node
-     * 
+     *
      * @param TNode $data
      * @param TNode|Node<TNode> $target
-     * 
+     *
      * @return null|Node<TNode>
      */
     public function addAfter($data, $target): ?Node
     {
         if ($this->isNotEmpty()) {
-            $currentNode = $this->find($target);
+            $currentNode = $this->getNode($target);
 
             if ($currentNode) {
                 $newNode = new Node($data);
@@ -174,21 +177,92 @@ class LinkedList
 
     /**
      * Find an element into the list
-     * 
-     * @param TNode $target
-     * @return null|Node<TNode>
+     *
+     * @param TNode|Node<TNode> $target
+     * @return null|TNode
      */
-    public function find($target): ?Node
+    public function find($target)
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $currentNode = $this->head;
 
             if ($target instanceof Node) {
                 $target = $target->getData();
             }
 
-            while ($currentNode->getData() != $target && $currentNode->getNext()) {
-                $currentNode = $currentNode->getNext();
+            while ($currentNode->getData() !== $target && $nextNode = $currentNode->getNext()) {
+                $currentNode = $nextNode;
+            }
+
+            return $currentNode->getData();
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the element before the target
+     *
+     * @param TNode|Node<TNode> $target
+     *
+     * @return null|TNode
+     */
+    public function findBefore($target)
+    {
+        if ($this->head) {
+            $currentNode = $this->head;
+
+            if ($target instanceof Node) {
+                $target = $target->getData();
+            }
+
+            if ($this->head->getData() === $target) {
+                return null;
+            }
+
+            $prevNode = null;
+
+            while ($currentNode->getData() !== $target && $currentNode = $currentNode->getNext()) {
+                $prevNode = $currentNode;
+            }
+
+            if ($prevNode) {
+                return $prevNode->getData();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the element after the target
+     *
+     * @param TNode|Node<TNode> $target
+     * @return null|TNode
+     */
+    public function findAfter($target)
+    {
+        return $this->find($target)?->getNext()->getData();
+    }
+
+    /**
+     * Returns a node from the list
+     *
+     * @param TNode|Node<TNode> $target
+     * @return null|Node<TNode>
+     */
+
+    public function getNode($target): ?Node
+    {
+        if ($this->head) {
+            $currentNode = $this->head;
+
+            if ($target instanceof Node) {
+                $target = $target->getData();
+            }
+
+            while ($currentNode->getData() !== $target && $nextNode = $currentNode->getNext()) {
+                $currentNode = $nextNode;
             }
 
             return $currentNode;
@@ -198,66 +272,67 @@ class LinkedList
     }
 
     /**
-     * Find the element before the target
-     * 
+     * Return the node before the target
+     *
      * @param TNode|Node<TNode> $target
-     * 
-     * @return Node<TNode>
+     *
+     * @return null|Node<TNode>
      */
-    public function findBefore($target): ?Node
+    public function getNodeBefore($target): ?Node
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $currentNode = $this->head;
 
             if ($target instanceof Node) {
                 $target = $target->getData();
             }
 
-            if ($this->head->getData() == $target) {
+            if ($this->head->getData() === $target) {
                 return null;
             }
 
             $prevNode = null;
 
-            while ($currentNode->getData() != $target && $currentNode->getNext()) {
+            while ($currentNode->getData() !== $target && $currentNode = $currentNode->getNext()) {
                 $prevNode = $currentNode;
-                $currentNode = $currentNode->getNext();
             }
 
-            return $prevNode;
+            if ($prevNode) {
+                return $prevNode;
+            }
         }
 
         return null;
     }
 
     /**
-     * Find the element after the target
-     * 
+     * Returns the node after the target
+     *
      * @param TNode|Node<TNode> $target
      * @return null|Node<TNode>
      */
-    public function findAfter($target): ?Node
+    public function getNodeAfter($target): ?Node
     {
-        return $this->find($target)->getNext();
+        return $this->getNode($target)?->getNext();
     }
 
     /**
      * Remove a specific element into the list
-     * 
+     *
      * @param TNode|Node<TNode> $target
      */
     public function remove($target): bool
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $currentNode = $this->head;
             $prevNode = null;
 
-            while ($currentNode->getData() != $target && $currentNode->getNext()) {
+            while ($currentNode->getData() !== $target && $currentNode->getNext()) {
                 $prevNode = $currentNode;
                 $currentNode = $currentNode->getNext();
             }
 
-            if ($currentNode->getData() == $target) {
+            if ($currentNode !== null && $currentNode->getData() === $target) {
                 if ($prevNode) {
                     $prevNode->setNext($currentNode->getNext());
                     unset($currentNode);
@@ -296,7 +371,7 @@ class LinkedList
 
     /**
      * Return the last element in the list
-     * 
+     *
      * @return null|Node<TNode>
      */
     public function getLastNode(): ?Node
@@ -316,7 +391,7 @@ class LinkedList
 
     /**
      * Return the first element in the list
-     * 
+     *
      * @return null|Node<TNode>
      */
     public function getFirstNode(): ?Node
@@ -329,7 +404,7 @@ class LinkedList
      */
     public function isEmpty(): bool
     {
-        return $this->head == null;
+        return $this->head === null;
     }
 
     /**
@@ -337,6 +412,6 @@ class LinkedList
      */
     public function isNotEmpty(): bool
     {
-        return $this->head != null;
+        return $this->head !== null;
     }
 }

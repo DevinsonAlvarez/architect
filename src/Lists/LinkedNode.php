@@ -14,7 +14,7 @@ class LinkedNode
      *
      * @var null|LinkedNode<TValue>
      */
-    protected ?self $next = null;
+    protected ?LinkedNode $next = null;
 
     /**
      * @param TValue $data
@@ -25,8 +25,10 @@ class LinkedNode
 
     /**
      * Sets the value contained in the node
+     *
+     * @param TValue $data
      */
-    public function setData(mixed $data): void
+    public function setData($data): void
     {
         $this->data = $data;
     }
@@ -44,11 +46,15 @@ class LinkedNode
     /**
      * Sets the next node to point to
      *
-     * @param TValue $next
+     * @param null|TValue|LinkedNode<TValue> $next
      */
     public function setNext($next): void
     {
-        $this->next = new self($next);
+        if ($next instanceof LinkedNode) {
+            $this->next = $next;
+        } else {
+            $this->next = new LinkedNode($next);
+        }
     }
 
     /**
@@ -56,7 +62,7 @@ class LinkedNode
      *
      * @return null|LinkedNode<TValue>
      */
-    public function getNext(): ?self
+    public function getNext(): ?LinkedNode
     {
         return $this->next;
     }
