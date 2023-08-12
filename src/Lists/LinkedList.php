@@ -6,20 +6,23 @@ namespace Devinson\Architect\Lists;
 
 use Devinson\Architect\Lists\LinkedNode as Node;
 
+/**
+ * @template TNode
+ */
 class LinkedList
 {
     /**
      * First node in the list
+     * 
+     * @var null|Node<TNode> $head
      */
-    protected ?Node $head;
+    protected ?Node $head = null;
 
     /**
-     * @param array<mixed,mixed> $data
+     * @param null|array<array-key,TNode> $data
      */
-    public function __construct($data = null)
+    public function __construct(?array $data = null)
     {
-        $this->head = null;
-
         if ($data) {
             foreach ($data as $item) {
                 $this->push($item);
@@ -29,8 +32,12 @@ class LinkedList
 
     /**
      * Insert an element at the end of the list
+     * 
+     * @param TNode $data
+     * 
+     * @return Node<TNode>
      */
-    public function push(mixed $data): Node
+    public function push($data): Node
     {
         $newNode = new Node($data);
 
@@ -50,7 +57,7 @@ class LinkedList
      */
     public function pop(): bool
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $lastNode = $this->getLastNode();
             $currentNode = $this->head;
 
@@ -69,8 +76,11 @@ class LinkedList
 
     /**
      * Insert an element at the top of the list
+     * 
+     * @param TNode $data
+     * @return Node<TNode>
      */
-    public function shift(mixed $data): Node
+    public function shift($data): Node
     {
         $newNode = new Node($data);
 
@@ -103,8 +113,13 @@ class LinkedList
 
     /**
      * Insert an element before the specific node
+     * 
+     * @param TNode $data
+     * @param TNode|Node<TNode> $target
+     * 
+     * @return null|Node<TNode>
      */
-    public function addBefore(mixed $data, mixed $target): ?Node
+    public function addBefore($data, $target): ?Node
     {
         if ($this->isNotEmpty()) {
             $currentNode = $this->find($target);
@@ -133,8 +148,13 @@ class LinkedList
 
     /**
      * Insert an element after the specific node
+     * 
+     * @param TNode $data
+     * @param TNode|Node<TNode> $target
+     * 
+     * @return null|Node<TNode>
      */
-    public function addAfter(mixed $data, mixed $target): ?Node
+    public function addAfter($data, $target): ?Node
     {
         if ($this->isNotEmpty()) {
             $currentNode = $this->find($target);
@@ -154,8 +174,11 @@ class LinkedList
 
     /**
      * Find an element into the list
+     * 
+     * @param TNode $target
+     * @return null|Node<TNode>
      */
-    public function find(mixed $target): ?Node
+    public function find($target): ?Node
     {
         if ($this->isNotEmpty()) {
             $currentNode = $this->head;
@@ -176,8 +199,12 @@ class LinkedList
 
     /**
      * Find the element before the target
+     * 
+     * @param TNode|Node<TNode> $target
+     * 
+     * @return Node<TNode>
      */
-    public function findBefore(mixed $target): ?Node
+    public function findBefore($target): ?Node
     {
         if ($this->isNotEmpty()) {
             $currentNode = $this->head;
@@ -205,16 +232,21 @@ class LinkedList
 
     /**
      * Find the element after the target
+     * 
+     * @param TNode|Node<TNode> $target
+     * @return null|Node<TNode>
      */
-    public function findAfter(mixed $target): ?Node
+    public function findAfter($target): ?Node
     {
         return $this->find($target)->getNext();
     }
 
     /**
      * Remove a specific element into the list
+     * 
+     * @param TNode|Node<TNode> $target
      */
-    public function remove(mixed $target): bool
+    public function remove($target): bool
     {
         if ($this->isNotEmpty()) {
             $currentNode = $this->head;
@@ -236,15 +268,13 @@ class LinkedList
 
                 return true;
             }
-
-            return false;
         }
 
         return false;
     }
 
     /**
-     * @return null|array<int,mixed>
+     * @return null|array<int,TNode>
      */
     public function toArray()
     {
@@ -266,10 +296,12 @@ class LinkedList
 
     /**
      * Return the last element in the list
+     * 
+     * @return null|Node<TNode>
      */
     public function getLastNode(): ?Node
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $currentNode = $this->head;
 
             while ($currentNode->getNext()) {
@@ -284,6 +316,8 @@ class LinkedList
 
     /**
      * Return the first element in the list
+     * 
+     * @return null|Node<TNode>
      */
     public function getFirstNode(): ?Node
     {

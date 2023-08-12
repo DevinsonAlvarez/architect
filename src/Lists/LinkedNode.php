@@ -12,7 +12,7 @@ class LinkedNode
     /**
      * Next node pointed to
      *
-     * @var null|LinkedNode<mixed>
+     * @var null|LinkedNode<TValue>
      */
     protected ?self $next = null;
 
@@ -44,8 +44,7 @@ class LinkedNode
     /**
      * Sets the next node to point to
      *
-     * @template TNext
-     * @param TNext $next
+     * @param TValue $next
      */
     public function setNext($next): void
     {
@@ -55,7 +54,7 @@ class LinkedNode
     /**
      * Return the next node pointed to
      *
-     * @return null|LinkedNode<mixed>
+     * @return null|LinkedNode<TValue>
      */
     public function getNext(): ?self
     {
