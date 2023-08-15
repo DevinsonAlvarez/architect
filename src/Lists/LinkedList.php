@@ -34,85 +34,85 @@ class LinkedList
      * Insert an element at the end of the list
      *
      * @param TNode $data
-     *
-     * @return Node<TNode>
      */
-    public function push($data): Node
+    public function push($data): void
     {
         $newNode = new Node($data);
 
-        $lastNode = $this->getLastNode();
-
-        if ($lastNode) {
+        if ($lastNode = $this->getLastNode()) {
             $lastNode->setNext($newNode);
-
-            return $newNode;
+        } else {
+            $this->head = $newNode;
         }
-
-        return $this->head = $newNode;
     }
 
     /**
      * Remove the last element in the list
+     *
+     * @return null|TNode
      */
-    public function pop(): bool
+    public function pop()
     {
-        if ($this->head) {
+        if (!$this->head) {
+            return null;
+        }
+
+        if ($this->head->getNext()) {
             $lastNode = $this->getLastNode();
             $currentNode = $this->head;
 
-            if ($lastNode) {
-                while ($currentNode->getNext() !== $lastNode) {
-                    if ($nextNode = $currentNode->getNext()) {
-                        $currentNode = $nextNode;
-                    }
-                }
-
-                $currentNode->setNext(null);
-                unset($lastNode);
-
-                return true;
+            while ($currentNode->getNextNode() !== $lastNode) {
+                $currentNode = $currentNode->getNextNode();
             }
-        }
 
-        return false;
+            $currentNode->setNext(null);
+
+            $poppedNode = $lastNode->getData();
+            unset($lastNode);
+
+            return $poppedNode;
+        } else {
+            $poppedNode = $this->head->getData();
+            $this->head = null;
+
+            return $poppedNode;
+        }
     }
 
     /**
      * Insert an element at the top of the list
      *
      * @param TNode $data
-     * @return Node<TNode>
      */
-    public function shift($data): Node
+    public function shift($data): void
     {
         $newNode = new Node($data);
 
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $newNode->setNext($this->head);
             $this->head = $newNode;
-
-            return $this->head;
         }
 
         $this->head = $newNode;
-
-        return $this->head;
     }
 
     /**
      * Remove the first element in the list
+     * 
+     * @return null|TNode
      */
-    public function unshift(): bool
+    public function unshift()
     {
         if ($this->head) {
-            if ($newHead = $this->head->getNext()) {
-                $this->head = $newHead;
+            $oldHead = $this->head->getData();
+            $newHead = $this->head->getNextNode();
 
-                return true;
-            }
+            $this->head = $newHead;
+
+            return $oldHead;
         }
-        return false;
+
+        return null;
     }
 
     /**
@@ -125,25 +125,22 @@ class LinkedList
      */
     public function addBefore($data, $target): ?Node
     {
-        if ($this->isNotEmpty()) {
-            if ($currentNode = $this->getNode($target)) {
-                $prevNode = $this->getNodeBefore($currentNode);
+        if ($this->head && $currentNode = $this->getNode($target)) {
+            $prevNode = $this->getNodeBefore($currentNode);
 
-                $newNode = new Node($data);
+            $newNode = new Node($data);
 
-                if ($prevNode) {
-                    $prevNode->setNext($newNode);
-                    $newNode->setNext($currentNode);
-
-                    return $newNode;
-                }
-
-                $prevNode = $newNode;
-                $prevNode->setNext($currentNode);
-                $this->head = $prevNode;
+            if ($prevNode) {
+                $prevNode->setNext($newNode);
+                $newNode->setNext($currentNode);
 
                 return $newNode;
             }
+
+            $newNode->setNext($currentNode);
+            $this->head = $newNode;
+
+            return $this->head;
         }
 
         return null;
@@ -159,13 +156,13 @@ class LinkedList
      */
     public function addAfter($data, $target): ?Node
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $currentNode = $this->getNode($target);
 
             if ($currentNode) {
                 $newNode = new Node($data);
 
-                $newNode->setNext($currentNode->getNext());
+                $newNode->setNext($currentNode->getNextNode());
                 $currentNode->setNext($newNode);
 
                 return $newNode;
@@ -190,11 +187,13 @@ class LinkedList
                 $target = $target->getData();
             }
 
-            while ($currentNode->getData() !== $target && $nextNode = $currentNode->getNext()) {
+            while ($currentNode->getData() !== $target && $nextNode = $currentNode->getNextNode()) {
                 $currentNode = $nextNode;
             }
 
-            return $currentNode->getData();
+            if ($currentNode->getData() === $target) {
+                return $currentNode->getData();
+            }
         }
 
         return null;
@@ -222,8 +221,9 @@ class LinkedList
 
             $prevNode = null;
 
-            while ($currentNode->getData() !== $target && $currentNode = $currentNode->getNext()) {
+            while ($currentNode->getData() !== $target && $currentNode->getNextNode()) {
                 $prevNode = $currentNode;
+                $currentNode = $currentNode->getNextNode();
             }
 
             if ($prevNode) {
@@ -242,7 +242,41 @@ class LinkedList
      */
     public function findAfter($target)
     {
-        return $this->find($target)?->getNext()->getData();
+        return $this->getNode($target)?->getNext();
+    }
+
+    /**
+     * Return the last element in the list
+     *
+     * @return null|TNode
+     */
+    public function findLast()
+    {
+        if ($this->head) {
+            $currentNode = $this->head;
+
+            while ($currentNode->getNextNode()) {
+                $currentNode = $currentNode->getNextNode();
+            }
+
+            return $currentNode->getData();
+        }
+
+        return null;
+    }
+
+    /**
+     * Return the first element in the list
+     *
+     * @return null|TNode
+     */
+    public function findFirst()
+    {
+        if ($this->head) {
+            return $this->head->getData();
+        }
+
+        return null;
     }
 
     /**
@@ -261,11 +295,13 @@ class LinkedList
                 $target = $target->getData();
             }
 
-            while ($currentNode->getData() !== $target && $nextNode = $currentNode->getNext()) {
+            while ($currentNode->getData() !== $target && $nextNode = $currentNode->getNextNode()) {
                 $currentNode = $nextNode;
             }
 
-            return $currentNode;
+            if ($currentNode->getData() === $target) {
+                return $currentNode;
+            }
         }
 
         return null;
@@ -293,8 +329,9 @@ class LinkedList
 
             $prevNode = null;
 
-            while ($currentNode->getData() !== $target && $currentNode = $currentNode->getNext()) {
+            while ($currentNode->getData() !== $target && $currentNode->getNextNode()) {
                 $prevNode = $currentNode;
+                $currentNode = $currentNode->getNextNode();
             }
 
             if ($prevNode) {
@@ -313,60 +350,7 @@ class LinkedList
      */
     public function getNodeAfter($target): ?Node
     {
-        return $this->getNode($target)?->getNext();
-    }
-
-    /**
-     * Remove a specific element into the list
-     *
-     * @param TNode|Node<TNode> $target
-     */
-    public function remove($target): bool
-    {
-        if ($this->head) {
-            $currentNode = $this->head;
-            $prevNode = null;
-
-            while ($currentNode->getData() !== $target && $currentNode->getNext()) {
-                $prevNode = $currentNode;
-                $currentNode = $currentNode->getNext();
-            }
-
-            if ($currentNode !== null && $currentNode->getData() === $target) {
-                if ($prevNode) {
-                    $prevNode->setNext($currentNode->getNext());
-                    unset($currentNode);
-                } else {
-                    $this->head = $currentNode->getNext();
-                    unset($currentNode);
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @return null|array<int,TNode>
-     */
-    public function toArray()
-    {
-        if ($this->isNotEmpty()) {
-            $array = [];
-            $currentNode = $this->head;
-
-            while ($currentNode) {
-                $array[] = $currentNode->getData();
-
-                $currentNode = $currentNode->getNext();
-            }
-
-            return $array;
-        }
-
-        return null;
+        return $this->getNode($target)?->getNextNode();
     }
 
     /**
@@ -379,8 +363,8 @@ class LinkedList
         if ($this->head) {
             $currentNode = $this->head;
 
-            while ($currentNode->getNext()) {
-                $currentNode = $currentNode->getNext();
+            while ($currentNode->getNextNode()) {
+                $currentNode = $currentNode->getNextNode();
             }
 
             return $currentNode;
@@ -400,6 +384,54 @@ class LinkedList
     }
 
     /**
+     * Remove a specific element into the list
+     *
+     * @param TNode|Node<TNode> $target
+     */
+    public function remove($target): bool
+    {
+        if ($this->head) {
+
+            if ($targetNode = $this->getNode($target)) {
+                $prevNode = $this->getNodeBefore($targetNode);
+
+                if ($prevNode) {
+                    $prevNode->setNext($targetNode->getNextNode());
+
+                    unset($targetNode);
+                } else {
+                    $this->head = $this->head->getNextNode();
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return null|array<int,TNode>
+     */
+    public function toArray()
+    {
+        if ($this->head) {
+            $array = [];
+            $currentNode = $this->head;
+
+            while ($currentNode) {
+                $array[] = $currentNode->getData();
+
+                $currentNode = $currentNode->getNextNode();
+            }
+
+            return $array;
+        }
+
+        return null;
+    }
+
+    /**
      * Check if the list is empty
      */
     public function isEmpty(): bool
@@ -413,5 +445,25 @@ class LinkedList
     public function isNotEmpty(): bool
     {
         return $this->head !== null;
+    }
+
+    /**
+     * Returns the number of elements in the list or null if it is empty
+     */
+    public function getLength(): int
+    {
+        if ($this->head) {
+            $currentNode = $this->head;
+            $length = 0;
+
+            while ($currentNode) {
+                $length++;
+                $currentNode = $currentNode->getNextNode();
+            }
+
+            return $length;
+        }
+
+        return 0;
     }
 }

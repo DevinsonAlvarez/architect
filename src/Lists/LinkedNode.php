@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Devinson\Architect\Lists;
 
 /**
- * @template TValue
+ * @template TData
  */
 class LinkedNode
 {
     /**
      * Next node pointed to
      *
-     * @var null|LinkedNode<TValue>
+     * @var null|LinkedNode<TData>
      */
     protected ?LinkedNode $next = null;
 
     /**
-     * @param TValue $data
+     * @param TData $data
      */
     public function __construct(protected $data)
     {
@@ -26,7 +26,7 @@ class LinkedNode
     /**
      * Sets the value contained in the node
      *
-     * @param TValue $data
+     * @param TData $data
      */
     public function setData($data): void
     {
@@ -36,7 +36,7 @@ class LinkedNode
     /**
      * Returns the values stored in the node
      *
-     * @return TValue
+     * @return TData
      */
     public function getData()
     {
@@ -46,11 +46,13 @@ class LinkedNode
     /**
      * Sets the next node to point to
      *
-     * @param null|TValue|LinkedNode<TValue> $next
+     * @param null|TData|LinkedNode<TData> $next
      */
     public function setNext($next): void
     {
-        if ($next instanceof LinkedNode) {
+        if ($next === null) {
+            $this->next = null;
+        } else if ($next instanceof LinkedNode) {
             $this->next = $next;
         } else {
             $this->next = new LinkedNode($next);
@@ -58,11 +60,21 @@ class LinkedNode
     }
 
     /**
+     * Return the data that contains the next node
+     *
+     * @return null|TData
+     */
+    public function getNext()
+    {
+        return $this->next?->getData();
+    }
+
+    /**
      * Return the next node pointed to
      *
-     * @return null|LinkedNode<TValue>
+     * @return null|LinkedNode<TData>
      */
-    public function getNext(): ?LinkedNode
+    public function getNextNode(): ?LinkedNode
     {
         return $this->next;
     }

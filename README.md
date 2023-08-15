@@ -35,16 +35,3 @@ composer install
 ## Usage
 
 coming soon...
-
-### TODO
-
-1. Add generic types and types hinting to:
-
-   - List
-   - Linked List
-   - Linked Node
-   - Double Linked Node
-   - Stack
-   - Queue
-
-2. Create Non-Linear data structures (Binary Trees, Heap, Graphs, etc...).
