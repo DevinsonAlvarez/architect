@@ -3,6 +3,8 @@
   "description": "A simple library for common data structures management.",
   "type": "library",
   "license": "MIT",
+  "version": "0.1.2-dev",
+  "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
       "Devinson\\Architect\\": "src/"
@@ -32,6 +34,5 @@
     "fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php",
     "phpunit": "vendor/bin/phpunit",
     "test": "vendor/bin/phpunit --testdox --colors=always"
-  },
-  "minimum-stability": "dev"
+  }
 }
