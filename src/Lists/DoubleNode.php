@@ -11,14 +11,14 @@ class DoubleNode
 {
     /**
      * Next node pointed to
-     * 
+     *
      * @var null|DoubleNode<TData>
      */
     protected ?DoubleNode $next = null;
 
     /**
      * Previous node pointed to
-     * 
+     *
      * @var null|DoubleNode<TData>
      */
     protected ?DoubleNode $prev = null;
@@ -32,7 +32,7 @@ class DoubleNode
 
     /**
      * Sets the value contained in the node
-     * 
+     *
      * @param TData $data
      */
     public function setData($data): void
@@ -42,7 +42,7 @@ class DoubleNode
 
     /**
      * Returns the values stored in the node
-     * 
+     *
      * @return TData
      */
     public function getData()
@@ -52,14 +52,14 @@ class DoubleNode
 
     /**
      * Sets the next node to point to
-     * 
+     *
      * @param null|TData|DoubleNode<TData> $next
      */
     public function setNext($next): void
     {
         if ($next instanceof DoubleNode) {
             $this->next = $next;
-        } else if ($next === null) {
+        } elseif ($next === null) {
             $this->next = null;
         } else {
             $this->next = new DoubleNode($next);
@@ -68,7 +68,7 @@ class DoubleNode
 
     /**
      * Return the data that contains the next node
-     * 
+     *
      * @return null|TData
      */
     public function getNext()
@@ -78,7 +78,7 @@ class DoubleNode
 
     /**
      * Return the next node pointed to
-     * 
+     *
      * @return null|DoubleNode<TData>
      */
     public function getNextNode(): ?DoubleNode
@@ -88,14 +88,14 @@ class DoubleNode
 
     /**
      * Sets the previous node to point to
-     * 
+     *
      * @param null|TData|DoubleNode<TData> $prev
      */
     public function setPrev($prev): void
     {
         if ($prev instanceof DoubleNode) {
             $this->prev = $prev;
-        } else if ($prev === null) {
+        } elseif ($prev === null) {
             $this->prev = null;
         } else {
             $this->prev = new DoubleNode($prev);
@@ -104,7 +104,7 @@ class DoubleNode
 
     /**
      * Return the data that contains the previous node
-     * 
+     *
      * @return null|TData
      */
     public function getPrev()
@@ -114,7 +114,7 @@ class DoubleNode
 
     /**
      * Return the previous node pointed to
-     * 
+     *
      * @return null|DoubleNode<TData>
      */
     public function getPrevNode(): ?DoubleNode

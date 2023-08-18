@@ -58,12 +58,11 @@ class LinkedList
         }
 
         if ($this->head->getNext()) {
+            /** @var Node<TNode> */
             $lastNode = $this->getLastNode();
-            $currentNode = $this->head;
 
-            while ($currentNode->getNextNode() !== $lastNode) {
-                $currentNode = $currentNode->getNextNode();
-            }
+            /** @var Node<TNode> */
+            $currentNode = $this->getNodeBefore($lastNode);
 
             $currentNode->setNext(null);
 
@@ -98,7 +97,7 @@ class LinkedList
 
     /**
      * Remove the first element in the list
-     * 
+     *
      * @return null|TNode
      */
     public function unshift()
@@ -448,7 +447,7 @@ class LinkedList
     }
 
     /**
-     * Returns the number of elements in the list or null if it is empty
+     * Returns the number of elements in the list
      */
     public function getLength(): int
     {

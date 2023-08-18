@@ -52,7 +52,7 @@ class LinkedNode
     {
         if ($next === null) {
             $this->next = null;
-        } else if ($next instanceof LinkedNode) {
+        } elseif ($next instanceof LinkedNode) {
             $this->next = $next;
         } else {
             $this->next = new LinkedNode($next);

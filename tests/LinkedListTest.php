@@ -144,7 +144,7 @@ final class LinkedListTest extends TestCase
     {
         $listLength = $list->getLength();
         $firstNode = $list->findFirst();
-        $secondNode = $list->getFirstNode()->getNext();
+        $secondNode = $list->getFirstNode()?->getNext();
 
         $removedNode = $list->unshift();
 
@@ -154,9 +154,6 @@ final class LinkedListTest extends TestCase
         $this->assertSame($removedNode, $firstNode);
     }
 
-    /**
-     * @param LinkedList<string> $list
-     */
     public function testAddBeforeAnElement(): void
     {
         $listData = ['item1', 'item2', 'item3', 'item4', 'item5'];
@@ -178,9 +175,6 @@ final class LinkedListTest extends TestCase
         $this->assertSame('item1', $list->findAfter('newNode'));
     }
 
-    /**
-     * @param LinkedList<string> $list
-     */
     public function testAddAfterAnElement(): void
     {
         $listData = ['item1', 'item2', 'item3', 'item4', 'item5'];
@@ -221,7 +215,12 @@ final class LinkedListTest extends TestCase
         $this->assertSame(null, $list->find('node1'));
         $this->assertSame('node2', $list->findFirst());
 
-        $rear = $list->findLast();
+        $rear = $list->findLast() ?? null;
+
+        if (!$rear) {
+            $this->assertFalse($rear);
+        }
+
         $beforeRear = $list->findBefore($rear);
 
         $this->assertSame(true, $list->remove($rear));

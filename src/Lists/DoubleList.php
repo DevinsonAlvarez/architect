@@ -6,21 +6,24 @@ namespace Devinson\Architect\Lists;
 
 use Devinson\Architect\Lists\DoubleNode as Node;
 
+/**
+ * @template TNode
+ */
 class DoubleList
 {
     /**
      * First node in the list
+     *
+     * @var null|Node<TNode>
      */
-    protected ?Node $head;
+    protected ?Node $head = null;
 
     /**
-     * @param array<mixed> $data
+     * @param null|array<array-key,TNode> $data
      */
-    public function __construct(array $data = [])
+    public function __construct(?array $data = null)
     {
-        $this->head = null;
-
-        if (!empty($data)) {
+        if ($data) {
             foreach ($data as $item) {
                 $this->push($item);
             }
@@ -29,8 +32,10 @@ class DoubleList
 
     /**
      * Insert an element at the end of the list
+     *
+     * @param TNode $data
      */
-    public function push(mixed $data): Node
+    public function push($data): void
     {
         $newNode = new Node($data);
 
@@ -39,88 +44,109 @@ class DoubleList
         if ($lastNode) {
             $lastNode->setNext($newNode);
             $newNode->setPrev($lastNode);
-
-            return $newNode;
+        } else {
+            $this->head = $newNode;
         }
-
-        return $this->head = $newNode;
     }
 
     /**
      * Remove the last element in the list
+     *
+     * @return null|TNode
      */
-    public function pop(): bool
+    public function pop()
     {
-        $lastNode = $this->getLastNode();
+        if ($this->head && $lastNode = $this->getLastNode()) {
+            $prevLastNode = $lastNode->getPrevNode();
 
-        if ($lastNode) {
-            $prevLastNode = $lastNode->getPrev();
-            $prevLastNode->setNext(null);
+            if ($prevLastNode) {
+                $prevLastNode->setNext(null);
 
-            unset($lastNode);
+                $lastNodeData = $lastNode->getData();
 
-            return true;
+                unset($lastNode);
+
+                return $lastNodeData;
+            }
+
+            $oldHead = $this->head->getData();
+
+            $this->head = null;
+
+            return $oldHead;
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Insert an element at the top of the list
+     *
+     * @param TNode $data
      */
-    public function shift(mixed $data): Node
+    public function shift($data): void
     {
         $newNode = new Node($data);
 
-        if ($this->isNotEmpty()) {
-            $firstNode = $this->getFirstNode();
+        if ($this->head) {
+            $firstNode = $this->head;
             $newNode->setNext($firstNode);
             $firstNode->setPrev($newNode);
             $this->head = $newNode;
-
-            return $this->head;
         }
 
         $this->head = $newNode;
-
-        return $this->head;
     }
 
     /**
      * Remove the first element in the list
+     *
+     * @return null|TNode
      */
-    public function unshift(): bool
+    public function unshift()
     {
-        if ($this->isNotEmpty()) {
-            $newHead = $this->findAfter($this->head);
-            $newHead->setPrev(null);
-            $this->head = $newHead;
+        if ($this->head) {
+            $oldHead = $this->head->getData();
 
-            return true;
+            if ($nextFirst = $this->head->getNextNode()) {
+                $nextFirst->setPrev(null);
+
+                $this->head = $nextFirst;
+
+                return $oldHead;
+            } else {
+                $this->head = null;
+                return $oldHead;
+            }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Insert an element before the specific node
+     *
+     * @param TNode $data
+     * @param TNode|Node<TNode> $target
+     *
+     * @return null|TNode
      */
-    public function addBefore(mixed $data, mixed $target): ?Node
+    public function addBefore($data, $target)
     {
-        $currentNode = $this->find($target);
-
-        if ($currentNode) {
+        if ($currentNode = $this->getNode($target)) {
             $newNode = new Node($data);
-            $prevCurrentNode = $currentNode->getPrev();
 
-            $newNode->setNext($currentNode);
-            $currentNode->setPrev($newNode);
+            if ($prevCurrentNode = $currentNode->getPrevNode()) {
+                $newNode->setPrev($prevCurrentNode);
+                $prevCurrentNode->setNext($newNode);
 
-            $prevCurrentNode && $prevCurrentNode->setNext($newNode);
+                $currentNode->setPrev($newNode);
+                $newNode->setNext($currentNode);
+            } else {
+                $this->shift($newNode->getData());
+            }
 
-            $newNode->setPrev($prevCurrentNode);
-
-            return $newNode;
+            return $newNode->getData();
         }
 
         return null;
@@ -128,45 +154,54 @@ class DoubleList
 
     /**
      * Insert an element after the specific node
+     *
+     * @param TNode $data
+     * @param TNode|Node<TNode> $target
+     * 
+     * @return null|TNode
      */
-    public function addAfter(mixed $data, mixed $target): ?Node
+    public function addAfter($data, $target)
     {
-        $currentNode = $this->find($target);
-
-        if ($currentNode) {
+        if ($currentNode = $this->getNode($target)) {
             $newNode = new Node($data);
-            $nextCurrentNode = $currentNode->getNext();
 
-            $currentNode->setNext($newNode);
+            if ($nextCurrentNode = $currentNode->getNextNode()) {
+                $newNode->setNext($nextCurrentNode);
+                $nextCurrentNode->setPrev($newNode);
+            }
+
             $newNode->setPrev($currentNode);
+            $currentNode->setNext($newNode);
 
-            $nextCurrentNode && $nextCurrentNode->setPrev($newNode);
-
-            $newNode->setNext($nextCurrentNode);
-
-            return $newNode;
+            return $newNode->getData();
         }
 
         return null;
     }
 
     /**
-     * Find an elemento into the list
+     * Find an element into the list
+     *
+     * @param TNode|Node<TNode> $target
+     *
+     * @return null|TNode
      */
-    public function find(mixed $target): ?Node
+    public function find($target)
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $currentNode = $this->head;
 
             if ($target instanceof Node) {
                 $target = $target->getData();
             }
 
-            while ($currentNode->getData() != $target && $currentNode->getNext()) {
-                $currentNode = $currentNode->getNext();
+            while ($currentNode->getData() !== $target && $currentNode->getNextNode()) {
+                $currentNode = $currentNode->getNextNode();
             }
 
-            return $currentNode;
+            if ($currentNode->getData() === $target) {
+                return $currentNode->getData();
+            }
         }
 
         return null;
@@ -174,56 +209,143 @@ class DoubleList
 
     /**
      * Find the element before the target
+     *
+     * @param TNode|Node<TNode> $target
+     *
+     * @return null|TNode
      */
-    public function findBefore(mixed $target): ?Node
+    public function findBefore($target)
     {
-        return $this->find($target)->getPrev();
+        return $this->getNode($target)?->getPrev();
     }
 
     /**
      * Find the element after the target
+     *
+     * @param TNode|Node<TNode> $target
+     *
+     * @return null|TNode
      */
-    public function findAfter(mixed $target): ?Node
+    public function findAfter($target)
     {
-        return $this->find($target)->getNext();
+        return $this->getNode($target)?->getNext();
+    }
+
+    /**
+     * Find the list head
+     *
+     * @return null|TNode
+     */
+    public function findFirst()
+    {
+        return $this->head?->getData();
+    }
+
+    /**
+     * Find the list rear
+     *
+     * @return null|TNode
+     */
+    public function findLast()
+    {
+        return $this->getLastNode()?->getData();
+    }
+
+    /**
+     * Return the node that match with the target
+     *
+     * @param TNode|Node<TNode> $target
+     *
+     * @return null|Node<TNode>
+     */
+    public function getNode($target): ?Node
+    {
+        if ($this->head) {
+            $currentNode = $this->head;
+
+            if ($target instanceof Node) {
+                $target = $target->getData();
+            }
+
+            while ($currentNode->getData() !== $target && $currentNode->getNextNode()) {
+                $currentNode = $currentNode->getNextNode();
+            }
+
+            if ($currentNode->getData() === $target) {
+                return $currentNode;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the element before the target
+     *
+     * @param TNode|Node<TNode> $target
+     *
+     * @return null|Node<TNode>
+     */
+    public function getNodeBefore($target): ?Node
+    {
+        return $this->getNode($target)?->getPrevNode();
+    }
+
+    /**
+     * Find the element after the target
+     *
+     * @param TNode|Node<TNode> $target
+     *
+     * @return null|Node<TNode>
+     */
+    public function getNodeAfter($target): ?Node
+    {
+        return $this->getNode($target)?->getNextNode();
     }
 
     /**
      * Remove a specific element into the list
+     *
+     * @param TNode|Node<TNode> $target
+     * 
+     * @return null|TNode
      */
-    public function remove(mixed $target): bool
+    public function remove($target)
     {
-        $currentNode = $this->find($target);
+        /** @var null|Node<TNode> */
+        $currentNode = $this->getNode($target);
 
         if ($currentNode) {
-            $prevCurrentNode = $currentNode->getPrev();
-            $nextCurrentNode = $currentNode->getNext();
+            $prevCurrentNode = $currentNode->getPrevNode();
+            $nextCurrentNode = $currentNode->getNextNode();
 
             $prevCurrentNode && $prevCurrentNode->setNext($nextCurrentNode);
             $nextCurrentNode && $nextCurrentNode->setPrev($prevCurrentNode);
 
+            $removedNode = $currentNode->getData();
             unset($currentNode);
 
-            return true;
+            return $removedNode;
         }
 
-        return false;
+        return null;
     }
 
     /**
-     * @return null|array<int, mixed>
+     * @return null|array<int,TNode>
      */
     public function toArray()
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $array = [];
             $currentNode = $this->head;
 
             while ($currentNode) {
                 $array[] = $currentNode->getData();
 
-                $currentNode = $currentNode->getNext();
+                $currentNode = $currentNode->getNextNode();
             }
+
 
             return $array;
         }
@@ -233,14 +355,16 @@ class DoubleList
 
     /**
      * Return the last element in the list
+     *
+     * @return null|Node<TNode>
      */
     public function getLastNode(): ?Node
     {
-        if ($this->isNotEmpty()) {
+        if ($this->head) {
             $currentNode = $this->head;
 
-            while ($currentNode->getNext()) {
-                $currentNode = $currentNode->getNext();
+            while ($currentNode->getNextNode()) {
+                $currentNode = $currentNode->getNextNode();
             }
 
             return $currentNode;
@@ -251,6 +375,8 @@ class DoubleList
 
     /**
      * Return the first element in the list
+     *
+     * @return null|Node<TNode>
      */
     public function getFirstNode(): ?Node
     {
@@ -262,7 +388,7 @@ class DoubleList
      */
     public function isEmpty(): bool
     {
-        return $this->head == null;
+        return $this->head === null;
     }
 
     /**
@@ -271,5 +397,25 @@ class DoubleList
     public function isNotEmpty(): bool
     {
         return !$this->isEmpty();
+    }
+
+    /**
+     * Return the number of elements in the list
+     */
+    public function getLength(): int
+    {
+        if ($this->head) {
+            $currentNode = $this->head;
+            $length = 0;
+
+            while ($currentNode) {
+                $length++;
+                $currentNode = $currentNode->getNextNode();
+            }
+
+            return $length;
+        }
+
+        return 0;
     }
 }

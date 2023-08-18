@@ -5,106 +5,187 @@ declare(strict_types=1);
 namespace Devinson\Architect\Tests;
 
 use Devinson\Architect\Lists\DoubleList;
-use Devinson\Architect\Tests\DataProviders\DoubleListProvider;
-use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class DoubleListTest extends TestCase
 {
-    final public function test_push_element_in_empty_list(): void
+    public const SHORT_DOUBLE_LIST_LENGTH = 10;
+    public const MEDIUM_DOUBLE_LIST_LENGTH = 25;
+    public const LONG_DOUBLE_LIST_LENGTH = 50;
+
+    final public function testDoubleListConstructor(): void
     {
+        $arrayList = ['item1', 'item2', 'item3'];
+
         $list = new DoubleList();
 
-        $list->push('node');
+        $this->assertSame(true, $list->isEmpty());
 
-        $this->assertSame('node', $list->getFirstNode()->getData());
+        $list = new DoubleList($arrayList);
+
+        $this->assertSame(false, $list->isEmpty());
+        $this->assertSame(3, $list->getLength());
+        $this->assertSame($arrayList, $list->toArray());
     }
 
-    #[DataProviderExternal(DoubleListProvider::class, 'shortList')]
-    final public function test_push_element_in_not_empty_list(DoubleList $list): void
+    /**
+     * @param DoubleList<string> $list
+     */
+    #[DataProvider('doubleListProvider')]
+    public function testPushElement(DoubleList $list): void
     {
-        $list->push('new node');
+        $listLength = $list->getLength();
 
-        $this->assertSame('new node', $list->getLastNode()->getData());
-        $this->assertSame(null, $list->getLastNode()->getNext());
-        $this->assertSame('node3', $list->getLastNode()->getPrev()->getData());
-    }
+        $list->push('newNode');
+        $this->assertSame('newNode', $list->findLast());
+        $this->assertSame(($listLength + 1), $list->getLength());
 
-    #[DataProviderExternal(DoubleListProvider::class, 'shortList')]
-    final public function test_pop_element(DoubleList $list): void
-    {
-        $this->assertSame('node3', $list->getLastNode()->getData());
-
-        $list->pop();
-
-        $this->assertSame('node2', $list->getLastNode()->getData());
-        $this->assertSame('node1', $list->getLastNode()->getPrev()->getData());
-        $this->assertSame(null, $list->getLastNode()->getNext());
-    }
-
-    final public function test_shift_element_in_empty_list(): void
-    {
         $list = new DoubleList();
 
-        $list->shift('new node');
+        $this->assertSame(0, $list->getLength());
 
-        $this->assertSame('new node', $list->getFirstNode()->getData());
-        $this->assertSame(null, $list->getFirstNode()->getNext());
-        $this->assertSame(null, $list->getFirstNode()->getPrev());
+        $list->push('newNode');
+
+        $this->assertSame(1, $list->getLength());
+        $this->assertSame('newNode', $list->findFirst());
+        $this->assertSame('newNode', $list->findLast());
     }
 
-    #[DataProviderExternal(DoubleListProvider::class, 'shortList')]
-    final public function test_shift_element_in_not_empty_list(DoubleList $list): void
+    /**
+     * @param DoubleList<string> $list
+     */
+    #[DataProvider('doubleListProvider')]
+    public function testPopElement(DoubleList $list): void
     {
-        $list->shift('new node');
+        $listLength = $list->getLength();
+        $oldLastNode = $list->findLast();
+        $prevOldLastNode = $list->getLastNode()?->getPrev();
 
-        $this->assertSame('new node', $list->getFirstNode()->getData());
-        $this->assertSame('node1', $list->getFirstNode()->getNext()->getData());
-        $this->assertSame(null, $list->getFirstNode()->getPrev());
+        $poppedNode = $list->pop();
+
+        $this->assertSame(($listLength - 1), $list->getLength());
+        $this->assertSame($poppedNode, $oldLastNode);
+        $this->assertSame($prevOldLastNode, $list->findLast());
+
+        $listLength = $list->getLength();
+
+        for ($i = 0; $i < $listLength; $i++) {
+            $list->pop();
+        }
+
+        $this->assertSame(0, $list->getLength());
+        $this->assertSame(true, $list->isEmpty());
     }
 
-    #[DataProviderExternal(DoubleListProvider::class, 'shortList')]
-    final public function test_unshift_element(DoubleList $list): void
+    /**
+     * @param DoubleList<string> $list
+     */
+    #[DataProvider('doubleListProvider')]
+    public function testShiftElement(DoubleList $list): void
     {
-        $list->unshift();
+        $listLength = $list->getLength();
+        $oldFirstNode = $list->findFirst();
 
-        $this->assertSame('node2', $list->getFirstNode()->getData());
+        $list->shift('newNode');
+
+        $this->assertSame(($listLength + 1), $list->getLength());
+        $this->assertSame('newNode', $list->findFirst());
+        $this->assertSame($oldFirstNode, $list->getFirstNode()?->getNext());
+
+        $list = new DoubleList();
+        $list->shift('newNode');
+
+        $this->assertSame(1, $list->getLength());
+        $this->assertSame('newNode', $list->findFirst());
     }
 
-    #[DataProviderExternal(DoubleListProvider::class, 'mediumList')]
-    final public function test_add_before(DoubleList $list): void
+    /**
+     * @param DoubleList<string> $list
+     */
+    #[DataProvider('doubleListProvider')]
+    public function testUnshiftElement(DoubleList $list): void
     {
-        $targetNode = $list->find('node3');
+        $listLength = $list->getLength();
+        $oldFirstNode = $list->findFirst();
+        $nextOldFirstNode = $list->getFirstNode()?->getNext();
 
-        $newNode = $list->addBefore('new node', $targetNode);
+        $unshiftedNode = $list->unshift();
 
-        $this->assertSame('node2', $newNode->getPrev()->getData());
-        $this->assertSame('node3', $newNode->getNext()->getData());
+        $this->assertSame(($listLength - 1), $list->getLength());
+        $this->assertSame($oldFirstNode, $unshiftedNode);
+        $this->assertSame($nextOldFirstNode, $list->findFirst());
+
+        $listLength = $list->getLength();
+
+        for ($i = 0; $i < $listLength; $i++) {
+            $list->unshift();
+        }
+
+        $this->assertSame(0, $list->getLength());
+        $this->assertSame(true, $list->isEmpty());
     }
 
-    #[DataProviderExternal(DoubleListProvider::class, 'mediumList')]
-    final public function test_add_after(DoubleList $list): void
+    public function testAddBeforeAnElement(): void
     {
-        $targetNode = $list->find('node5');
+        $list = new DoubleList(['item1', 'item2', 'item3', 'item4', 'item5']);
 
-        $newNode = $list->addAfter('new node', $targetNode);
+        $listLength = $list->getLength();
 
-        $this->assertSame('node5', $newNode->getPrev()->getData());
-        $this->assertSame('node6', $newNode->getNext()->getData());
+        $list->addBefore('newNode', 'item3');
+
+        $this->assertSame(($listLength + 1), $list->getLength());
+        $this->assertSame('item3', $list->findAfter('newNode'));
+        $this->assertSame('item2', $list->findBefore('newNode'));
+        $this->assertSame('newNode', $list->findAfter('item2'));
+        $this->assertSame('newNode', $list->findBefore('item3'));
+
+        $oldFirstNode = $list->findFirst();
+
+        $list->addBefore('otherNewNode', 'item1');
+
+        $this->assertSame('otherNewNode', $list->findFirst());
+        $this->assertSame($oldFirstNode, $list->findAfter('otherNewNode'));
+        $this->assertSame(null, $list->findBefore('otherNewNode'));
+        $this->assertSame('otherNewNode', $list->findBefore($oldFirstNode));
     }
 
-    #[DataProviderExternal(DoubleListProvider::class, 'mediumList')]
-    final public function test_remove_element(DoubleList $list): void
+    #[DataProvider('doubleListProvider')]
+    public function testRemoveAnItem(DoubleList $list): void
     {
-        $this->assertSame(true, $list->remove('node5'));
+        $listLength = $list->getLength();
+        $prevRemovedNode = $list->findBefore('node3');
+        $nexRemovedNode = $list->findAfter('node3');
+
+        $nodeRemoved = $list->remove('node3');
+
+        $this->assertSame(($listLength - 1), $list->getLength());
+        $this->assertSame(null, $list->find($nodeRemoved));
+        $this->assertSame($nexRemovedNode, $list->findAfter($prevRemovedNode));
+        $this->assertSame($prevRemovedNode, $list->findBefore($nexRemovedNode));
     }
 
-    final public function test_construct(): void
+    /**
+     * @return array<string,DoubleList<string>[]>
+     */
+    public static function doubleListProvider(): array
     {
-        $data = ['node1', 'node2', 'node3'];
+        for ($i = 0; $i < static::SHORT_DOUBLE_LIST_LENGTH; $i++) {
+            $shortList[] = 'node' . ($i + 1);
+        }
 
-        $list = new DoubleList($data);
+        for ($i = 0; $i < static::MEDIUM_DOUBLE_LIST_LENGTH; $i++) {
+            $mediumList[] = 'node' . ($i + 1);
+        }
 
-        $this->assertSame($data, $list->toArray());
+        for ($i = 0; $i < static::LONG_DOUBLE_LIST_LENGTH; $i++) {
+            $longList[] = 'node' . ($i + 1);
+        }
+
+        return [
+            'shortList' => [new DoubleList($shortList)],
+            'mediumList' => [new DoubleList($mediumList)],
+            'longList' => [new DoubleList($longList)],
+        ];
     }
 }
