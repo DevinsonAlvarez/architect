@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Devinson\Architect\Stacks;
 
+/**
+ * @template T
+ */
 class Stack
 {
     private int $top = -1;
 
     /**
-     * @var array<int,mixed>
+     * @var array<int,T>
      */
     private $stack = [];
 
     /**
-     * @param mixed[] $data
+     * @param T[] $data
      */
     public function __construct(array $data = [])
     {
@@ -27,24 +30,25 @@ class Stack
 
     /**
      * Insert an element at the top of the stack
+     * 
+     * @param T $data
      */
-    public function push(mixed $data): int
+    public function push($data): void
     {
         $this->stack[++$this->top] = $data;
-
-        return $this->top;
     }
 
     /**
      * Remove the top stack element
+     * 
+     * @return T
      */
-    public function pop(): mixed
+    public function pop()
     {
         if ($this->isNotEmpty()) {
-            $popedElement = $this->stack[$this->top];
-            unset($this->stack[$this->top]);
+            $poppedElement = array_pop($this->stack);
             $this->top -= 1;
-            return $popedElement;
+            return $poppedElement;
         }
 
         return null;
@@ -72,8 +76,10 @@ class Stack
 
     /**
      * Return the top element in the list
+     * 
+     * @return null|T
      */
-    public function getTop(): mixed
+    public function getTop()
     {
         if ($this->isNotEmpty()) {
             return $this->stack[$this->top];
@@ -99,7 +105,7 @@ class Stack
     }
 
     /**
-     * @return null|array<int,mixed>
+     * @return null|array<int,T>
      */
     public function toArray()
     {
