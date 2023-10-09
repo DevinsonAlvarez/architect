@@ -157,7 +157,7 @@ class DoubleList
      *
      * @param TNode $data
      * @param TNode|Node<TNode> $target
-     * 
+     *
      * @return null|TNode
      */
     public function addAfter($data, $target)
@@ -307,7 +307,7 @@ class DoubleList
      * Remove a specific element into the list
      *
      * @param TNode|Node<TNode> $target
-     * 
+     *
      * @return null|TNode
      */
     public function remove($target)

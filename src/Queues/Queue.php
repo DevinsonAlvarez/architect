@@ -4,57 +4,47 @@ declare(strict_types=1);
 
 namespace Devinson\Architect\Queues;
 
+/**
+ * @template T
+ */
 class Queue
 {
-    private int $front;
-    private int $rear;
-
     /**
-     * @var array<int,mixed>
+     * @var array<int,T>
      */
     private $queue = [];
 
-    public function __construct()
+    /**
+     * @param array<array-key,T> $data
+     */
+    public function __construct(array $data = [])
     {
-        $this->front = -1;
-        $this->rear = -1;
+        if (!empty($data)) {
+            foreach ($data as $item) {
+                $this->enqueue($item);
+            }
+        }
     }
 
     /**
-     * Adds an element to the end of the queue and returns its position
+     * Adds an element to the end of the queue
+     *
+     * @param T $data
      */
-    public function enQueue(mixed $data): int
+    public function enqueue($data): void
     {
-        ($this->front == -1) ? $this->front = 0 : null;
-
-        $this->queue[++$this->rear] = $data;
-
-        return $this->rear;
+        $this->queue[] = $data;
     }
 
     /**
-     * Removes an element from the queue and returns it
+     * Removes an element from the top of the queue
+     *
+     * @return null|T
      */
-    public function deQueue(): mixed
+    public function dequeue()
     {
         if ($this->isNotEmpty()) {
-            if ($this->front > $this->rear) {
-                $this->front = -1;
-                $this->rear = -1;
-
-                return null;
-            }
-
-            $element = $this->queue[$this->front];
-            unset($this->queue[$this->front]);
-            $this->front++;
-
-            if ($this->front > $this->rear) {
-                $this->front = -1;
-                $this->rear = -1;
-            }
-
-            return $element;
+            return array_shift($this->queue);
         }
 
         return null;
@@ -62,8 +52,10 @@ class Queue
 
     /**
      * Search an element in the queue by given index
+     *
+     * @return null|T
      */
-    public function find(int $index): mixed
+    public function find(int $index)
     {
         if ($this->isNotEmpty()) {
             return $this->queue[$index];
@@ -75,7 +67,7 @@ class Queue
     /**
      * Returns the queue as an array
      *
-     * @return null|array<int,mixed>
+     * @return null|array<int,T>
      */
     public function toArray(): ?array
     {
@@ -93,12 +85,14 @@ class Queue
     }
 
     /**
-     * Returns the first element in the queue or null if it's empty
+     * Returns the first element in the queue
+     *
+     * @return null|T
      */
-    public function getFront(): mixed
+    public function peek()
     {
         if ($this->isNotEmpty()) {
-            return $this->queue[$this->front];
+            return reset($this->queue);
         }
 
         return null;
@@ -106,11 +100,13 @@ class Queue
 
     /**
      * Returns the last element in the queue or null if it's empty
+     *
+     * @return null|T
      */
-    public function getRear(): mixed
+    public function getRear()
     {
         if ($this->isNotEmpty()) {
-            return $this->queue[$this->rear];
+            return end($this->queue);
         }
 
         return null;
@@ -121,7 +117,7 @@ class Queue
      */
     public function getSize(): int
     {
-        return ($this->rear - $this->front) + 1;
+        return count($this->queue);
     }
 
     /**
@@ -129,7 +125,7 @@ class Queue
      */
     public function isEmpty(): bool
     {
-        return $this->front == -1;
+        return empty($this->queue);
     }
 
     /**
@@ -137,6 +133,6 @@ class Queue
      */
     public function isNotEmpty(): bool
     {
-        return $this->front != -1;
+        return !empty($this->queue);
     }
 }

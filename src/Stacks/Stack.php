@@ -30,7 +30,7 @@ class Stack
 
     /**
      * Insert an element at the top of the stack
-     * 
+     *
      * @param T $data
      */
     public function push($data): void
@@ -40,8 +40,8 @@ class Stack
 
     /**
      * Remove the top stack element
-     * 
-     * @return T
+     *
+     * @return null|T
      */
     public function pop()
     {
@@ -56,8 +56,10 @@ class Stack
 
     /**
      * Search an element in the stack by given index
+     *
+     * @return null|T
      */
-    public function find(int $index): mixed
+    public function find(int $index)
     {
         if ($this->isNotEmpty()) {
             return $this->stack[$index];
@@ -76,7 +78,7 @@ class Stack
 
     /**
      * Return the top element in the list
-     * 
+     *
      * @return null|T
      */
     public function getTop()
@@ -105,14 +107,10 @@ class Stack
     }
 
     /**
-     * @return null|array<int,T>
+     * @return array<int,T>
      */
     public function toArray()
     {
-        if ($this->isNotEmpty()) {
-            return $this->stack;
-        }
-
-        return null;
+        return $this->stack;
     }
 }

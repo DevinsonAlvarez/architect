@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Devinson\Architect\Tests;
 
 use Devinson\Architect\Lists\DoubleList;
+use Devinson\Architect\Lists\DoubleNode;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -140,6 +141,7 @@ final class DoubleListTest extends TestCase
         $this->assertSame('newNode', $list->findAfter('item2'));
         $this->assertSame('newNode', $list->findBefore('item3'));
 
+        /** @var DoubleNode<string> */
         $oldFirstNode = $list->findFirst();
 
         $list->addBefore('otherNewNode', 'item1');
@@ -150,13 +152,21 @@ final class DoubleListTest extends TestCase
         $this->assertSame('otherNewNode', $list->findBefore($oldFirstNode));
     }
 
+    /**
+     * @param DoubleList<string> $list
+     */
     #[DataProvider('doubleListProvider')]
     public function testRemoveAnItem(DoubleList $list): void
     {
         $listLength = $list->getLength();
+
+        /** @var DoubleNode<string> */
         $prevRemovedNode = $list->findBefore('node3');
+
+        /** @var DoubleNode<string> */
         $nexRemovedNode = $list->findAfter('node3');
 
+        /** @var DoubleNode<string> */
         $nodeRemoved = $list->remove('node3');
 
         $this->assertSame(($listLength - 1), $list->getLength());

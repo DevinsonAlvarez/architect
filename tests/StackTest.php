@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Devinson\Architect\Tests;
 
 use Devinson\Architect\Stacks\Stack;
-use Devinson\Architect\Tests\DataProviders\StackProvider;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\TestCase;
 
 final class StackTest extends TestCase
@@ -32,7 +30,9 @@ final class StackTest extends TestCase
 
         $stack->push('a');
 
-        $this->assertSame('a', $stack->toArray()[0]);
+        $stack = $stack->toArray();
+
+        $this->assertSame('a', $stack[0]);
 
         /** @var Stack<int> */
         $stack = new Stack();
@@ -70,7 +70,7 @@ final class StackTest extends TestCase
     /**
      * @return array<string,Stack<string>[]>
      */
-    public  static function stackProvider()
+    public static function stackProvider()
     {
         for ($i = 0; $i < static::SMALL_STACK_SIZE; $i++) {
             $smallStack[] = 'element' . ($i + 1);
