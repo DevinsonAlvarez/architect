@@ -30,7 +30,7 @@
         "phpunit/phpunit": "10.3"
     },
     "scripts": {
-        "analyse": "vendor/bin/phpstan analyse",
+        "analyse": "vendor/bin/phpstan analyse --ansi",
         "fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php",
         "phpunit": "vendor/bin/phpunit",
         "test": "vendor/bin/phpunit --testdox --colors=always"
